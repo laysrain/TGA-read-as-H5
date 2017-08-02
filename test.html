@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+	<head>
+		<title>TGA - Loader</title>
+		<script type="text/javascript" src="tga.js"></script>
+		<script type="text/javascript" src="jquery-1.10.2.js"></script>
+	</head>
+	<body>
+		<input type="file" id="chance">
+		<img src="" id="my">
+		<script type="text/javascript">
+			function ChangeTGA(pic_element,trigger_element){
+				pic_element.change(function(){
+					var imgname=GetImgName(pic_element);
+					var imghouzhui=GetImgExtend(pic_element);
+					alert(imghouzhui);
+					if (imghouzhui=="tga") {
+						var tga = new TGA();
+						tga.open(imgname, function(data){
+						var pwid=tga.getWidth();
+						var phei=tga.getHeight();
+
+							var area_w = $('#area_w').val();
+		                    var area_h = $('#area_h').val();
+		                        if(pwid > area_w || phei > area_h){
+		                            alert('当前区域宽'+area_w+'，高'+area_h+'，所选图片超过此范围。\n请选择合适的图片或修改区域大小再上传');
+		                            return;
+		                        }
+
+		                var imgdata =tga.getDataURL();
+							pic_element.attr("img_src",imgdata);
+							pic_element.attr("img_w",pwid);
+							pic_element.attr("img_h",phei);
+							
+							trigger_element.trigger('change');
+		                    trigger_element.trigger('blur');
+						});
+					}
+					else{
+
+					}
+
+				});
+			}
+
+			function GetImgName(dom){
+				var nam=dom.val();
+				var subnam=nam.split('\\');
+				var imgnam=subnam[subnam.length-1];
+				return imgnam;
+			}
+
+			function GetImgExtend(dom){
+				var nnam=GetImgName(dom);
+				var geshi=nnam.split('.');
+				var houzhui=geshi[geshi.length-1];
+				return houzhui;
+			}
+
+			function TGAChangeToBase64(pic_element,trigger_element){
+				pic_element.change(function(){
+                var file = pic_element.get(0).files[0];
+                var reader = new FileReader();
+                reader.onload = function(e){
+
+	                        pic_element.attr('img_uri', e.target.result);
+	                        pic_element.attr('img_w', this.width);
+	                        pic_element.attr('img_h', this.height);
+	                        trigger_element.trigger('change');
+	                        trigger_element.trigger('blur');
+	                        $("#my").attr("src",e.target.result);
+                	}
+                reader.readAsDataURL(file);
+                //alert();
+            	});
+			}
+			ChangeTGA($("#chance"),$("#my"));
+			
+			//ChangeToBase64($("#chance"),$("#my"));
+		</script>
+	</body>
+</html>
